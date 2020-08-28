@@ -1,6 +1,6 @@
 import pika
 
-credentials = pika.PlainCredentials('user', 'Fn0ukDQVyC')
+credentials = pika.PlainCredentials('user', 'RQnPmtV388')
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(host='my-release-rabbitmq.default.svc', credentials=credentials))
 channel = connection.channel()

@@ -1,10 +1,13 @@
+from os import environ
 import pika
 from dotenv import load_dotenv
 load_dotenv()
 
-credentials = pika.PlainCredentials('user', 'RQnPmtV388')
+
+credentials = pika.PlainCredentials(environ.get(
+    'MQ_USERNAME'), environ.get('MQ_PASSWORD'))
 connection = pika.BlockingConnection(
-    pika.ConnectionParameters(host='my-release-rabbitmq.default.svc', credentials=credentials))
+    pika.ConnectionParameters(host=environ.get('MQ_HOST'), credentials=credentials))
 channel = connection.channel()
 
 channel.queue_declare(queue='hello')
@@ -19,3 +22,4 @@ channel.basic_consume(
 
 print(' [*] Waiting for messages. To exit press CTRL+C')
 channel.start_consuming()
+#

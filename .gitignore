@@ -1,0 +1,22 @@
+# Editors
+.vscode/
+.log
+
+# Mac/OSX
+.DS_Store
+
+# Environments
+.env
+**/__pycache__
+
+# virtualenv
+.venv/
+venv/
+ENV/
+
+# Distribution / packaging
+.Python
+lib/
+include/
+bin/
+share/

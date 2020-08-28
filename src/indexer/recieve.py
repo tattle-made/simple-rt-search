@@ -1,4 +1,6 @@
 import pika
+from dotenv import load_dotenv
+load_dotenv()
 
 credentials = pika.PlainCredentials('user', 'RQnPmtV388')
 connection = pika.BlockingConnection(

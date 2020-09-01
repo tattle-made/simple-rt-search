@@ -5,8 +5,8 @@ connection = pika.BlockingConnection(
     pika.ConnectionParameters(host='my-release-rabbitmq.default.svc', credentials=credentials))
 channel = connection.channel()
 
-channel.queue_declare(queue='hello')
+channel.queue_declare(queue='simple-search-index-queue', durable=True)
 
-channel.basic_publish(exchange='', routing_key='hello', body='Hello World!')
-print(" [x] Sent 'Hello World!'")
+channel.basic_publish(
+    exchange='', routing_key='simple-search-index-queue', body='Hello World!')
 connection.close()

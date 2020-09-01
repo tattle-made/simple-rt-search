@@ -1,14 +1,11 @@
 # importing required modules
 from Katna.video import Video
 import timeit
-import pandas as pd
-import matplotlib.pyplot as plt
 import os
 import moviepy.editor
 from mp3hash import mp3hash
 from PIL import Image
 import imagehash
-import timeit
 import shutil
 import multiprocessing
 
@@ -18,17 +15,27 @@ def create_folder_for_video(path):
 
 
 def get_key_frames_from_video(path_to_video, no_of_frames):
-    video = Video()
-    images = video.extract_frames_as_images(
-        no_of_frames=no_of_frames, file_path=path_to_video)
-    return images
+    print('getting key frames from video')
+    try:
+        video = Video()
+        images = video.extract_frames_as_images(
+            no_of_frames=no_of_frames, file_path=path_to_video)
+        return images
+    except:
+        print('error getting frames from videos')
 
 
 def write_images_into_folder(images, no_of_frames, path):
-    video = Video()
-    for i in range(no_of_frames):
-        video.save_frame_to_disk(
-            images[i], file_path=path, file_name="image"+str(i+1), file_ext=".png")
+    print('writing images into folder')
+    print(no_of_frames)
+    print(path)
+    try:
+        video = Video()
+        for i in range(no_of_frames):
+            video.save_frame_to_disk(images[i], file_path=path, file_name="image" + str(i + 1), file_ext=".png")
+    except Exception as e:
+        print('error saving extracted frames to disk')
+        print(e)
 
 
 def get_audio_from_video(path_to_video):
@@ -41,8 +48,12 @@ def write_audio_into_folder(audio, path):
 
 
 def extract_and_save_keyframes(path_to_video, no_of_frames, result_folder_path):
-    key_frames = get_key_frames_from_video(path_to_video, no_of_frames)
-    write_images_into_folder(key_frames, no_of_frames, result_folder_path)
+    print('extract and save keyframes')
+    try:
+        key_frames = get_key_frames_from_video(path_to_video, no_of_frames)
+        write_images_into_folder(key_frames, no_of_frames, result_folder_path)
+    except:
+        print('error extracting and saving keyframes')
 
 
 def extract_and_save_audio(path_to_video):
@@ -97,7 +108,7 @@ def get_feature_hash_from_video(path_to_video):
 
     feature_hashes.append(hash_audio(result_folder_path+"/audio.mp3"))
 
-    remove_folder_for_video(result_folder_path)
+    # remove_folder_for_video(result_folder_path)
 
     return feature_hashes
 
@@ -105,15 +116,3 @@ def get_feature_hash_from_video(path_to_video):
 def compute_video_hash(path_to_video):
     feature_hash = get_feature_hash_from_video(path_to_video)
     return xor_elements(feature_hash)
-
-
-image_proc = multiprocessing.Process(target=extract_and_save_keyframes, args=[
-                                     "/Users/anushree/tattle/sample_videos/fruitseller.mp4", 15, './results'])
-audio_proc = multiprocessing.Process(target=extract_and_save_audio, args=[
-                                     "/Users/anushree/tattle/sample_videos/fruitseller.mp4"])
-
-
-if __name__ == '__main__':
-    video_hash = compute_video_hash(
-        "/Users/anushree/tattle/sample_videos/fruitseller.mp4")
-    print(video_hash)

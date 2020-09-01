@@ -20,3 +20,8 @@ lib/
 include/
 bin/
 share/
+
+# Temporary files associated with video indexing
+images/
+src/indexer/results
+src/indexer/tmp

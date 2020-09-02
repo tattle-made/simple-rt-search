@@ -5,10 +5,14 @@ from helper import compute_video_hash
 s3 = boto3.client('s3')
 
 
-def get_video_hash(fileNameInS3):
-    with open('./tmp/'+fileNameInS3, 'wb') as f:
-        s3.download_fileobj(
-            'tattle-media', 'test-data/videos/'+fileNameInS3, f)
+def get_video_hash(bucketName, fileName, filePath):
+    # with open('./tmp/'+fileName, 'wb') as f:
+        # s3.download_fileobj(
+            # bucketName, filePath+fileName, f)
 
-    video_hash = compute_video_hash('./tmp/'+fileNameInS3)
+    video_hash = compute_video_hash('./tmp/'+fileName)
+    print(video_hash)
+
+def get_video_hash_from_local_file(fileName, filePathPrefix):
+    video_hash = compute_video_hash_from_local_file(fileName, filePathPrefix)
     print(video_hash)

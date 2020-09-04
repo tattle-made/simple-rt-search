@@ -1,0 +1,4 @@
+flask-restful
+flask_cors
+pika
+python-dotenv

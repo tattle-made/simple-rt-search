@@ -43,3 +43,14 @@ services:
     volumes:
       - ./src/indexer/:/app
     env_file: ./src/indexer/.env
+
+  search_api:
+    container_name: simple-rt-search-api
+    build:
+      context: ./src/api-server
+      dockerfile: Dockerfile
+    volumes:
+      - ./src/api-server:/app
+    env_file: ./src/api-server/.env
+    ports:
+      - 5000:5000

@@ -16,16 +16,13 @@ class Search(Resource):
         hash = get_image_hash_from_local_file(file.filename)
         print(hash)
 
-        mongo_url = "mongodb://localhost:27017"   
-        cli = MongoClient(mongo_url)
-        print(cli)
+        mongo_url = "mongodb://db:27017/"   
+        client = MongoClient(mongo_url)
+        print(client)
 
-        db = cli['simple-rt-search']
-        coll = db['sources']
-        print('coll : ', coll)
-        print('count : ', coll.count_documents)
-        if coll.count_documents({}) > 0:
-            print(coll) 
-        else:
-            print("Error accessing Mongo collection")
+        db = client['simple-rt-search']
+        sources = db['sources']
+
+        print(sources.find_one())
+        
         return 'hello'

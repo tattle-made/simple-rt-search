@@ -16,5 +16,7 @@ RUN pip install pip-tools
 RUN pip-compile requirements.in
 RUN pip install --no-cache-dir -r requirements.txt
 
+EXPOSE 5000
+
 # CMD python receive.py
 CMD tail -f /dev/null

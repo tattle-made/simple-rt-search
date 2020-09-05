@@ -13,8 +13,8 @@ import boto3
 
 s3 = boto3.client('s3')
 
-INPUT_FOLDER = './input/'
-OUTPUT_FOLDER = './output/'
+INPUT_FOLDER = './.input/'
+OUTPUT_FOLDER = './.output/'
 
 def create_folder_for_video(path):
     os.makedirs(path)

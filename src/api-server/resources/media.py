@@ -2,6 +2,7 @@ from flask_restful import Resource, reqparse
 import werkzeug
 import json
 from flask import jsonify, request
+from hash_helper import get_video_hash_from_local_file, get_image_hash_from_local_file, get_audio_hash_from_local_file
 
 class Media(Resource):
     def get(self):
@@ -14,7 +15,10 @@ class Media(Resource):
         parser.add_argument('file', type=werkzeug.datastructures.FileStorage, location='files')
         args = parser.parse_args()
         file = args['file']
-        file.save('my_' + str(file.filename))
+        file.save(file.filename)
+
+        hash = get_video_hash_from_local_file(file.fileName)
+        print(hash)
 
         # handle metadata
         # TODO : find a way to do this using reqparse.RequestParser

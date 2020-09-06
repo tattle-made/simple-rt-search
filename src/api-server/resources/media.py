@@ -2,7 +2,12 @@ from flask_restful import Resource, reqparse
 import werkzeug
 import json
 from flask import jsonify, request
-from hash_helper import get_video_hash_from_local_file, get_image_hash_from_local_file, get_audio_hash_from_local_file
+from send import add_job_to_queue
+
+post_request_parser = reqparse.RequestParser()
+post_request_parser.add_argument('file_url', type=str, help='file url is a mandatory field', required=True)
+post_request_parser.add_argument('media_type', type=str, choices=('video', 'audio', 'image'), help='The file type of media item. Acceptable values : video, image, audio', required=True)
+post_request_parser.add_argument('metadata', type=dict, help='Any metadata that you want to store in the search index. Use Judiciously')
 
 class Media(Resource):
     def get(self):
@@ -10,29 +15,14 @@ class Media(Resource):
     
     # TODO add validation for supported mimetypes : image/jpeg, image/png, audio/mpeg, audio/wav, video/mpeg
     def post(self):
-        # handle file
-        parser = reqparse.RequestParser()
-        parser.add_argument('file', type=werkzeug.datastructures.FileStorage, location='files')
-        args = parser.parse_args()
-        file = args['file']
-        file.save(file.filename)
-
-        hash = get_video_hash_from_local_file(file.fileName)
-        print(hash)
-
-        # handle metadata
-        # TODO : find a way to do this using reqparse.RequestParser
-        metadata_form = request.form.to_dict(flat=False).get('metadata')[0]
-        metadata = json.loads(metadata_form) 
-        print(metadata)
+        try:
+            args = post_request_parser.parse_args(strict=True)
+            add_job_to_queue(args)
+            return 'media enqueued', 200
         
-        
-        
-        
-        
-        
-        
-        
-        
+        except Exception as e:
+            print('error in finding indexing media : ', e)
+            raise
+            # return 'Error indexing media : '+str(e), 500
         
         

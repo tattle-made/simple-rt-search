@@ -27,6 +27,7 @@ src/indexer/results
 src/indexer/tmp
 src/indexer/input
 .input/
+.output/
 
 # docker volumes for local development
 .docker/

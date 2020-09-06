@@ -9,3 +9,5 @@ Pillow
 imagehash==4.1.0
 opencv-contrib-python==4.4.0.42
 boto3==1.14.51
+pymongo
+pika

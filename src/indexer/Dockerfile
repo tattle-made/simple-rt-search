@@ -14,5 +14,5 @@ RUN apt-get install -y vim
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-# CMD python receive.py
-CMD tail -f /dev/null
+CMD python receive.py
+# CMD tail -f /dev/null

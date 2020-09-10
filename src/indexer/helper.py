@@ -13,8 +13,8 @@ import boto3
 
 s3 = boto3.client('s3')
 
-INPUT_FOLDER = './input/'
-OUTPUT_FOLDER = './output/'
+INPUT_FOLDER = './.input/'
+OUTPUT_FOLDER = './.output/'
 
 def create_folder_for_video(path):
     os.makedirs(path)
@@ -157,8 +157,9 @@ def get_video_hash_from_local_file(fileName):
         image_proc = multiprocessing.Process(target=extract_one_frame, args=[fileName])
         image_proc.start()
         image_proc.join()
-        hash = hash_image(OUTPUT_FOLDER + fileName + '.png')
-        os.remove(OUTPUT_FOLDER + fileName + '.png')
+        hash = hash_image(OUTPUT_FOLDER + fileName+".png")
+        os.remove(OUTPUT_FOLDER + fileName + ".png")
+        os.remove(INPUT_FOLDER + fileName)
         return hash, True
     except Exception as e:
         print('Error getting hash from local file ', e)
@@ -176,6 +177,7 @@ def get_video_hash_from_s3_file(fileName, bucketName, filePathPrefix):
 def get_image_hash_from_local_file(fileName):
     try:
         hash = hash_image(INPUT_FOLDER + fileName)
+        os.remove(INPUT_FOLDER + fileName)
         return hash, True
     except Exception as e:
         print('error getting image hash ', e)
@@ -193,6 +195,7 @@ def get_image_hash_from_s3_file(fileName, bucketName, filePathPrefix):
 def get_audio_hash_from_local_file(fileName):
     try:
         hash = hash_audio(INPUT_FOLDER + fileName)
+        os.remove(INPUT_FOLDER + fileName)
         return hash, True
     except Exception as e:
         print('error getting image hash ', e)
@@ -200,9 +203,13 @@ def get_audio_hash_from_local_file(fileName):
 
 def get_audio_hash_from_s3_file(fileName, bucketName, filePathPrefix):
     print('downloading ', fileName, 'from ', bucketName)
+
+    def download_progress(byte_count):
+        print('downloaded ', byte_count)
+
     try:
         with open(INPUT_FOLDER+fileName, 'wb') as f:
-            s3.download_fileobj(bucketName, filePathPrefix + fileName, f)
+            s3.download_fileobj(bucketName, filePathPrefix + fileName, f, Callback=download_progress)
         return get_audio_hash_from_local_file(fileName)
     except Exception as e:
         print('error getting hash from s3 file ', e)

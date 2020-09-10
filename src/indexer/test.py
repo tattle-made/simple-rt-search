@@ -20,6 +20,10 @@ from helper import get_video_hash_from_local_file, get_video_hash_from_s3_file, 
 # result =  get_image_hash_from_s3_file('004e0126-2ef6-41de-97be-e0b9daaee480.jpeg', 'tattle-media', 'test-data/images/')
 # result =  get_image_hash_from_local_file('004e0126-2ef6-41de-97be-e0b9daaee480.jpeg')
 
-result =  get_audio_hash_from_s3_file('audio_1.mp3', 'tattle-media', 'test-data/audios/')
 # result =  get_audio_hash_from_local_file('audio_1.mp3')
+
+
+result =  get_audio_hash_from_s3_file('audio_1.mp3', 'tattle-media', 'test-data/audios/')
+# result =  get_image_hash_from_s3_file('004e0126-2ef6-41de-97be-e0b9daaee480.jpeg', 'tattle-media', 'test-data/images/')
+# result = get_video_hash_from_s3_file('4ba9454b-398a-4dcc-b8c1-2309979fb3fb.mp4', 'tattle-media' ,'test-data/videos/')
 print(result)

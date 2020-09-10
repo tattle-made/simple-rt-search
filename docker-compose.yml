@@ -36,7 +36,6 @@ services:
       - 15672:15672
 
   indexer:
-    container_name: simple-rt-indexer
     build:
       context: ./src/indexer
       dockerfile: Dockerfile

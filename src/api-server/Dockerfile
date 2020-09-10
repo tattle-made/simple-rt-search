@@ -18,5 +18,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 5000
 
-# CMD python receive.py
+# CMD gunicorn --preload -w 2 --threads 1 --bind 0.0.0.0:5000 server:application
 CMD tail -f /dev/null

@@ -11,3 +11,4 @@ opencv-contrib-python==4.4.0.42
 boto3==1.14.51
 pymongo
 pika
+gunicorn==20.0.4

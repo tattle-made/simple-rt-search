@@ -1,10 +1,12 @@
 from flask import Flask
+from flask_cors import CORS
 from flask_restful import Resource, Api
 from resources.media import Media
 from resources.search import Search
 from resources.health import Health
 
 app = Flask(__name__)
+CORS(app)
 # https://flask-restful.readthedocs.io/en/latest/reqparse.html#error-handling
 app.config['BUNDLE_ERRORS'] = True
 

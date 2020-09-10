@@ -5,7 +5,9 @@ from dotenv import load_dotenv
 import pymongo
 from pymongo import MongoClient
 load_dotenv()
+import datetime
 
+from helper import get_video_hash_from_s3_file, get_image_hash_from_s3_file, get_audio_hash_from_s3_file
 
 credentials = pika.PlainCredentials(environ.get(
     'MQ_USERNAME'), environ.get('MQ_PASSWORD'))
@@ -29,26 +31,44 @@ def store_hash_in_db(collection_name, doc):
     print('error storing hash in db')
     raise
 
-mimetyp_collection_map = {
+mimetype_collection_map = {
   'image': 'images',
   'video': 'videos',
   'audio': 'audios'
 }
 
 def callback(ch, method, properties, body):
-    print(" [x] Received %r" % body)
+    print("MESSAGE RECIEVED %r" % body)
     payload = json.loads(body)
-    print(payload)
-    print(type(payload))
-    mimetype = payload.metadata.media_type
+    mimetype = payload['media_type']
 
-    payload["created_at"]: datetime.datetime.utcnow()
-    payload["updated_at"]: datetime.datetime.utcnow()
-    doc_id = store_hash_in_db(mimetyp_collection_map[mimetype], doc)
-    response = {
-        'doc_id': str(doc_id)
-    }
-    ch.basic_ack(delivery_tag=method.delivery_tag)
+    try:
+        print('hello')
+        if mimetype == 'image':
+            media_hash, success = get_image_hash_from_s3_file(payload['file_name'], payload['bucket_name'], payload['filepath_prefix'])
+        elif mimetype == 'video':
+            media_hash, success = get_video_hash_from_s3_file(payload['file_name'], payload['bucket_name'], payload['filepath_prefix'])
+        elif mimetype == 'audio':
+            media_hash, success = get_audio_hash_from_s3_file(payload['file_name'], payload['bucket_name'], payload['filepath_prefix'])
+
+        print(media_hash, success)
+
+        if success == True:
+            document_to_be_indexed = {
+                "hash": media_hash,
+                "metadata": payload['metadata'],
+                "created_at": datetime.datetime.utcnow(),
+                "updated_at": datetime.datetime.utcnow()
+            }
+
+            id = str(store_hash_in_db(mimetype_collection_map[mimetype], document_to_be_indexed))
+
+            print(document_to_be_indexed)
+            print(id)
+
+            ch.basic_ack(delivery_tag=method.delivery_tag)
+    except Exception as e:
+        print('Error indexing media ', e)
 
 
 channel.basic_consume(queue='simple-search-index-queue', on_message_callback=callback)

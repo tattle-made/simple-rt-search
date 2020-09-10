@@ -1,0 +1,14 @@
+flask-restful
+flask_cors
+pika
+python-dotenv
+katna==0.4.1.4
+moviepy==1.0.3
+mp3hash==0.1
+Pillow
+imagehash==4.1.0
+opencv-contrib-python==4.4.0.42
+boto3==1.14.51
+pymongo
+pika
+gunicorn==20.0.4

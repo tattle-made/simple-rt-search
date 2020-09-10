@@ -1,0 +1,55 @@
+version: "3.5"
+
+services:
+  db:
+    image: mongo
+    container_name: db
+    ports:
+      - 27017:27017
+    volumes:
+      - ./.docker/mongo/data:/data/db
+    restart: always
+
+  db_gui:
+    image: mongo-express
+    container_name: db_gui
+    ports:
+      - 8081:8081
+    restart: always
+    environment:
+      ME_CONFIG_MONGODB_SERVER: db
+
+  rabbitmq:
+    image: rabbitmq:3.8.7-management
+    container_name: rabbitmq
+    hostname: rabbit
+    volumes:
+      - ./.docker/rabbitmq/etc/:/etc/rabbitmq/
+      - ./.docker/rabbitmq/data/:/var/lib/rabbitmq/
+      - ./.docker/rabbitmq/logs/:/var/log/rabbitmq/
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "secret-cookie"
+      RABBITMQ_DEFAULT_USER: "admin"
+      RABBITMQ_DEFAULT_PASS: "Admin123"
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+  indexer:
+    build:
+      context: ./src/indexer
+      dockerfile: Dockerfile
+    volumes:
+      - ./src/indexer/:/app
+    env_file: ./src/indexer/.env
+
+  search_api:
+    container_name: simple-rt-search-api
+    build:
+      context: ./src/api-server
+      dockerfile: Dockerfile
+    volumes:
+      - ./src/api-server:/app
+    env_file: ./src/api-server/.env
+    ports:
+      - 5000:5000

@@ -1,0 +1,33 @@
+# Editors
+.vscode/
+.log
+
+# Mac/OSX
+.DS_Store
+
+# Environments
+.env
+**/__pycache__
+
+# virtualenv
+.venv/
+venv/
+ENV/
+
+# Distribution / packaging
+.Python
+lib/
+include/
+bin/
+share/
+
+# Temporary files associated with video indexing
+images/
+src/indexer/results
+src/indexer/tmp
+src/indexer/input
+.input/
+.output/
+
+# docker volumes for local development
+.docker/

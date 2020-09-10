@@ -60,3 +60,8 @@ When you submit code changes, your submissions are understood to be under the sa
 
 - Gatsby
 - Coral Project
+
+## We Value Diversity and Multiplicity of Experiences
+
+At Tattle, we cherish diversity of experiences and perspectives. It adds value to our work.
+To this end, we strongly encourage candidates, even if they feel comfortable with the tech stack but find alignment with the mission of the project and are driven to learn, to reach out :)

@@ -1,10 +1,15 @@
 # Simple Realtime Search is a fast easy to scale tool to make media files searchable
 
-Fact Checkers and Journalists fighting misinformation need a reliable way to store and search the thousands of images, audios and videos circulating on chat apps and social media.
-Since a lot of this data is often recirculated and reshared without any major modifications, simple hashing techniques can be used to identify them.
-We built this Simple Realtime Search Service just for that.
+Fact Checkers and Journalists fighting misinformation need a reliable way to store and search millions of images, audios and videos circulating on chat apps and social media.
+Since a lot of this data is often recirculated and re-shared without any major modifications, simple hashing techniques can be used to provide unique signatures to them. Being able
+to associate simple metadata to these posts can help lay the foundation for building realtime automated service and products on top of this data.
+We are building Simple Realtime Search Service just for that.
 
-Features
+## Example Application
+
+![Gif showing search via images](https://tattle-media.s3.amazonaws.com/khoj-demo.gif)
+
+## Features
 
 - Realtime search results
 - Easy to scale if you anticipate increased loads during periods of high activity

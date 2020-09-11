@@ -18,13 +18,13 @@ We are building Simple Realtime Search Service just for that.
 
 ## Immediate Roadmap
 
-| In Progress   | Up next   | On the Horizon | Completed                                   |
-| ------------- | --------- | -------------- | ------------------------------------------- |
-| Documentation | Admin UI  | Admin UI       | Video Indexing and Search                   |
-|               | Demo apps | Basic Auth     | Image Indexing and Search                   |
-|               |           |                | Audio Indexing and Search                   |
-|               |           |                | Integrate RabbitMQ to implement a Job Queue |
-|               |           |                | Integrate Flask RESTful to make API         |
+| In Progress   | Up next   | On the Horizon | Completed                                    |
+| ------------- | --------- | -------------- | -------------------------------------------  |
+| Documentation | Admin UI  | Admin UI       | Video Indexing and Search                    |
+|               | Demo apps | Basic Auth     | Image Indexing and Search                    |
+|               |           |                | Audio Indexing and Search                    |
+|               |           |                | Integrate RabbitMQ to implement a Job Queue  |
+|               |           |                | Integrate Flask RESTful to make API          |
 
 ## Running Locally
 

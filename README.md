@@ -39,7 +39,7 @@ This will bring up the following services :
 5. Search Server : a public REST API to index new media and provide additional public APIs to interact with this service.
 
 The first time you run `docker-compose up` it will take 5-7 minutes for all services to come up. Its usually instantaneous after that, as long as you don't make changes to the Dockerfile associated
-with each service. To verify if every service is up, visit the following URL
+with each service. To verify if every service is up, visit the following URLs
 
 mongo : visit http://localhost:27017
 

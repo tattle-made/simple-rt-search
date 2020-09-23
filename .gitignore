@@ -31,3 +31,6 @@ src/indexer/input
 
 # docker volumes for local development
 .docker/
+
+# Temporary files for local development
+working-files/

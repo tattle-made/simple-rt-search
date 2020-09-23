@@ -3,6 +3,7 @@ import werkzeug
 import json
 from flask import jsonify, request
 from send import add_job_to_queue
+import datetime
 
 class Media(Resource):
     def __init__(self):
@@ -17,10 +18,12 @@ class Media(Resource):
 
     # TODO add validation for supported mimetypes : image/jpeg, image/png, audio/mpeg, audio/wav, video/mpeg
     def post(self):
+        print("hello")
         try:
             args = self.post_request_parser.parse_args(strict=True)
             print('POST /media filename : ', args['file_name'], " from bucket : ", args['bucket_name'])
             add_job_to_queue(args)
+            print("Queued at: ", datetime.datetime.utcnow())
             return 'media enqueued', 200
         
         except Exception as e:

@@ -22,6 +22,7 @@ opencv-contrib-python==4.4.0.42
 pika==1.1.0
 Pillow==7.2.0
 proglog==0.1.9
+pymongo==3.11.0
 pyparsing==2.4.7
 python-dateutil==2.8.1
 python-dotenv==0.14.0

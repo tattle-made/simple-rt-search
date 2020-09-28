@@ -1,3 +1,4 @@
+import sys
 from os import environ
 import pika
 import json
@@ -5,7 +6,8 @@ from dotenv import load_dotenv
 import pymongo
 from pymongo import MongoClient
 load_dotenv()
-import datetime
+from datetime import datetime
+import logging
 
 from helper import get_video_hash_from_s3_file, get_image_hash_from_s3_file, get_audio_hash_from_s3_file
 
@@ -14,8 +16,7 @@ credentials = pika.PlainCredentials(environ.get(
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(host=environ.get('MQ_HOST'), credentials=credentials))
 channel = connection.channel()
-channel.queue_declare(queue='simple-search-index-queue', durable=True)
-
+channel.queue_declare(queue='simple-search-report-queue', durable=True)
 
 print('initializing db')
 mongo_url = "mongodb://db:27017"
@@ -25,10 +26,10 @@ db = client['simple-rt-search']
 def store_hash_in_db(collection_name, doc):
   try:
     doc_id = db[collection_name].insert_one(doc).inserted_id
-    print('doc id : ', doc_id)
+    # print('doc id : ', doc_id)
     return doc_id
   except Exception as e:
-    print('error storing hash in db')
+    print('error storing hash in db', e)
     raise
 
 mimetype_collection_map = {
@@ -38,11 +39,14 @@ mimetype_collection_map = {
 }
 
 def callback(ch, method, properties, body):
-    print("MESSAGE RECIEVED %r" % body)
+    print("MESSAGE RECEIVED %r" % body)
     payload = json.loads(body)
+    report = {}
+    report["source_id"] = payload["metadata"]["source_id"]
+    report["source"] = payload["metadata"]["source"]
     mimetype = payload['media_type']
     try:
-        print('hello')
+        # print('hello')
         if mimetype == 'image':
             media_hash, success = get_image_hash_from_s3_file(payload['file_name'], payload['bucket_name'], payload['filepath_prefix'])
         elif mimetype == 'video':
@@ -51,24 +55,43 @@ def callback(ch, method, properties, body):
             media_hash, success = get_audio_hash_from_s3_file(payload['file_name'], payload['bucket_name'], payload['filepath_prefix'])
 
         print(media_hash, success)
-
+        timestamp = str(datetime.utcnow())
         if success == True:
             document_to_be_indexed = {
                 "hash": media_hash,
                 "metadata": payload['metadata'],
-                "created_at": datetime.datetime.utcnow(),
-                "updated_at": datetime.datetime.utcnow()
+                "created_at": timestamp,
+                "updated_at": timestamp
             }
 
-            id = str(store_hash_in_db(mimetype_collection_map[mimetype], document_to_be_indexed))
-            print("Indexed at: ", datetime.datetime.utcnow())
+            index_id = str(store_hash_in_db(mimetype_collection_map[mimetype], document_to_be_indexed))
+            report["index_timestamp"] = timestamp
+            report["index_id"] = index_id
+            report["status"] = "indexed"
 
-            # print(document_to_be_indexed)
-            # print(id)
+            ch.basic_publish(exchange='',
+            routing_key=properties.reply_to,
+            properties=pika.BasicProperties(
+                correlation_id=properties.correlation_id, 
+                content_type='application/json',
+                delivery_mode=2), # make message persistent
+            body=json.dumps(report))
 
             ch.basic_ack(delivery_tag=method.delivery_tag)
     except Exception as e:
+        report["status"] = "failed"
+        report["failure_timestamp"] = str(datetime.utcnow())
+        ch.basic_publish(exchange='',
+            routing_key=properties.reply_to,
+            properties=pika.BasicProperties(
+                correlation_id=properties.correlation_id, 
+                content_type='application/json',
+                delivery_mode=2),
+            body=json.dumps(report))
+
         print('Error indexing media ', e)
+        ch.basic_ack(delivery_tag=method.delivery_tag)
+    
 
 
 channel.basic_consume(queue='simple-search-index-queue', on_message_callback=callback)

@@ -18,19 +18,20 @@ class Media(Resource):
 
     # TODO add validation for supported mimetypes : image/jpeg, image/png, audio/mpeg, audio/wav, video/mpeg
     def post(self):
-        print("hello")
+        print("Server received request for queuing media")
         try:
             args = self.post_request_parser.parse_args(strict=True)
             # print('POST /media filename : ', args['file_name'], " from bucket : ", args['bucket_name'])
             indexer = IndexMedia()
             # response = indexer.add_job_to_queue(args)
+            print("Adding requested job to indexing queue ...")
             indexer.add_job_to_queue(args)
             # add_job_to_queue(args)
             # print("Queued at: ", str(datetime.datetime.utcnow()))
             return 'media enqueued', 200
         
         except Exception as e:
-            print('error in finding indexing media : ', e)
+            print('error in finding media : ', e)
             return 'Error indexing media : '+str(e), 500
         
         

@@ -45,7 +45,9 @@ def callback(ch, method, properties, body):
     report["source_id"] = payload["metadata"]["source_id"]
     report["source"] = payload["metadata"]["source"]
     mimetype = payload['media_type']
+    
     try:
+        print("Generating media hash ...")
         # print('hello')
         if mimetype == 'image':
             media_hash, success = get_image_hash_from_s3_file(payload['file_name'], payload['bucket_name'], payload['filepath_prefix'])
@@ -57,14 +59,16 @@ def callback(ch, method, properties, body):
         print(media_hash, success)
         timestamp = str(datetime.utcnow())
         if success == True:
+            print("Media hash generated successfully")
             document_to_be_indexed = {
                 "hash": media_hash,
                 "metadata": payload['metadata'],
                 "created_at": timestamp,
                 "updated_at": timestamp
             }
-
+            print("Storing hash in Simple Search db ...")
             index_id = str(store_hash_in_db(mimetype_collection_map[mimetype], document_to_be_indexed))
+            print("Sending report to queue ...")
             report["index_timestamp"] = timestamp
             report["index_id"] = index_id
             report["status"] = "indexed"
@@ -76,9 +80,12 @@ def callback(ch, method, properties, body):
                 content_type='application/json',
                 delivery_mode=2), # make message persistent
             body=json.dumps(report))
-
+            print("Indexing success report sent to report queue")
             ch.basic_ack(delivery_tag=method.delivery_tag)
     except Exception as e:
+        print('Error indexing media ', e)
+        print("Media hashing failed")
+        print("Sending report to queue ...")
         report["status"] = "failed"
         report["failure_timestamp"] = str(datetime.utcnow())
         ch.basic_publish(exchange='',
@@ -88,8 +95,7 @@ def callback(ch, method, properties, body):
                 content_type='application/json',
                 delivery_mode=2),
             body=json.dumps(report))
-
-        print('Error indexing media ', e)
+        print("Indexing failure report sent to report queue")
         ch.basic_ack(delivery_tag=method.delivery_tag)
     
 

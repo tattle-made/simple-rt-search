@@ -54,4 +54,4 @@ services:
     env_file: ./src/api-server/.env
     ports:
       - 5000:5000
-    command: tail -f /dev/null
+    command: python server.py

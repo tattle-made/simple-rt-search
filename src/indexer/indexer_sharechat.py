@@ -27,7 +27,7 @@ def IndexerSharechat():
     print("Sending media indexing requests from Sharechat service to Simple Search service ...")
     for i in coll.find({
         "media_type": {"$in": ["image", "video"]}, 
-        "scraped_date": {'$gte':start,'$lt':end}}).limit(10): #limit for testing
+        "scraped_date": {'$gte':start,'$lt':end}}).limit(500): #limit for testing
         try:
             print(i["_id"])
             res = {}

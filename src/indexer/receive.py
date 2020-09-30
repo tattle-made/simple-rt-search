@@ -16,6 +16,7 @@ credentials = pika.PlainCredentials(environ.get(
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(host=environ.get('MQ_HOST'), credentials=credentials))
 channel = connection.channel()
+channel.queue_declare(queue='simple-search-index-queue', durable=True)
 channel.queue_declare(queue='simple-search-report-queue', durable=True)
 
 print('initializing db')

@@ -29,7 +29,7 @@ channel = connection.channel()
 channel.queue_declare(queue='simple-search-report-queue', durable=True)
 
 def callback(ch, method, properties, body):
-    print("MESSAGE RECEIVEDr %" % body)
+    print("MESSAGE RECEIVED %r" % body)
     try:
         payload = json.loads(body)
         report = {}

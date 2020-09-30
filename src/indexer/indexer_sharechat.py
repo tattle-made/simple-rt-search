@@ -15,10 +15,13 @@ from helper_sharechat import get_data, index_media
 import logging
 import re
 
-mongo_url = "mongodb+srv://"+os.environ.get("SHARECHAT_DB_USERNAME")+":"+os.environ.get("SHARECHAT_DB_PASSWORD")+"@tattle-data-fkpmg.mongodb.net/test?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE"   
-cli = MongoClient(mongo_url)
-db = cli[os.environ.get("SHARECHAT_DB_NAME")]
-coll = db[os.environ.get("SHARECHAT_DB_COLLECTION")]
+try:
+    mongo_url = "mongodb+srv://"+os.environ.get("SHARECHAT_DB_USERNAME")+":"+os.environ.get("SHARECHAT_DB_PASSWORD")+"@tattle-data-fkpmg.mongodb.net/test?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE"   
+    cli = MongoClient(mongo_url)
+    db = cli[os.environ.get("SHARECHAT_DB_NAME")]
+    coll = db[os.environ.get("SHARECHAT_DB_COLLECTION")]
+except Exception as e:
+    print('Error Connecting to Mongo ', e)
 
 def IndexerSharechat():
     c=0

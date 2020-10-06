@@ -37,6 +37,7 @@ def callback(ch, method, properties, body):
             report["status"] = payload["status"]
             report["index_timestamp"] = payload["index_timestamp"]
             report["index_id"] = payload["index_id"]
+            print(report)
             print("Updating indexing status in Sharechat db ...")
             coll.update_one(
                 {"_id": ObjectId(payload["source_id"])},
@@ -45,6 +46,7 @@ def callback(ch, method, properties, body):
         elif payload["status"] == "failed":
             report["status"] = payload["status"]
             report["failure_timestamp"] = payload["failure_timestamp"]
+            print(report)
             print("Updating indexing status in Sharechat db ...")
             coll.update_one(
                 {"_id": ObjectId(payload["source_id"])},

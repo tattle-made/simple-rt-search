@@ -2,7 +2,7 @@ from flask_restful import Resource, reqparse
 import werkzeug
 import json
 from flask import jsonify, request
-from send import IndexMedia
+from send import add_job_to_queue
 import datetime
 
 class Media(Resource):
@@ -22,10 +22,12 @@ class Media(Resource):
         try:
             args = self.post_request_parser.parse_args(strict=True)
             # print('POST /media filename : ', args['file_name'], " from bucket : ", args['bucket_name'])
-            indexer = IndexMedia()
+            # indexer = IndexMedia()
             # response = indexer.add_job_to_queue(args)
             print("Adding requested job to indexing queue ...")
-            indexer.add_job_to_queue(args)
+            # indexer.add_job_to_queue(args)
+            add_job_to_queue(args)
+            print("Job added")
             # add_job_to_queue(args)
             # print("Queued at: ", str(datetime.datetime.utcnow()))
             return 'media enqueued', 200

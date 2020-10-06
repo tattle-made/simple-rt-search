@@ -27,7 +27,6 @@ db = client['simple-rt-search']
 def store_hash_in_db(collection_name, doc):
   try:
     doc_id = db[collection_name].insert_one(doc).inserted_id
-    # print('doc id : ', doc_id)
     return doc_id
   except Exception as e:
     print('error storing hash in db', e)
@@ -49,7 +48,6 @@ def callback(ch, method, properties, body):
     
     try:
         print("Generating media hash ...")
-        # print('hello')
         if mimetype == 'image':
             media_hash, success = get_image_hash_from_s3_file(payload['file_name'], payload['bucket_name'], payload['filepath_prefix'])
         elif mimetype == 'video':
@@ -74,13 +72,13 @@ def callback(ch, method, properties, body):
             report["index_id"] = index_id
             report["status"] = "indexed"
 
-            ch.basic_publish(exchange='',
-            routing_key=properties.reply_to,
+            channel.basic_publish(exchange='',
+            routing_key='simple-search-report-queue',
             properties=pika.BasicProperties(
-                correlation_id=properties.correlation_id, 
                 content_type='application/json',
                 delivery_mode=2), # make message persistent
             body=json.dumps(report))
+
             print("Indexing success report sent to report queue")
             ch.basic_ack(delivery_tag=method.delivery_tag)
     except Exception as e:

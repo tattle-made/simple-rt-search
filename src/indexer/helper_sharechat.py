@@ -12,11 +12,13 @@ def get_data(record):
     data["media_type"] = record["media_type"]
     data["bucket_name"] = "sharechat-scraper.tattle.co.in"
     data["filepath_prefix"] = ""
+    data["source"] = "sharechat"
+    data["source_id"] = str(record["_id"])
     if record["media_type"] == "video":
         data["file_name"] = record["filename"] + ".mp4"
     elif record["media_type"] == "image":
         data["file_name"]= record["filename"] + ".jpg"
-    data["metadata"] = {"source": "sharechat", "source_id": str(record["_id"])}
+    data["metadata"] = {}
     return json.dumps(data)
 
 def index_media(data):

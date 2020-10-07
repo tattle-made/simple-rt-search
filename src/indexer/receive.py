@@ -42,8 +42,8 @@ def callback(ch, method, properties, body):
     print("MESSAGE RECEIVED %r" % body)
     payload = json.loads(body)
     report = {}
-    report["source_id"] = payload["metadata"]["source_id"]
-    report["source"] = payload["metadata"]["source"]
+    report["source_id"] = payload["source_id"]
+    report["source"] = payload["source"]
     mimetype = payload['media_type']
     
     try:

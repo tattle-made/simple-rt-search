@@ -13,6 +13,8 @@ class Media(Resource):
         self.post_request_parser.add_argument('bucket_name', type=str)
         self.post_request_parser.add_argument('filepath_prefix', type=str)
         self.post_request_parser.add_argument('media_type', type=str, choices=('video', 'audio', 'image'), help='The file type of media item. Acceptable values : video, image, audio', required=True)
+        self.post_request_parser.add_argument('source', type=str)
+        self.post_request_parser.add_argument('source_id', type=str)
         self.post_request_parser.add_argument('metadata', type=dict, help='Any metadata that you want to store in the search index. Use Judiciously')
         
 

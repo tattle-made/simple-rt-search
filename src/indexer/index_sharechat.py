@@ -30,7 +30,7 @@ def IndexerSharechat():
     print("Sending media indexing requests from Sharechat service to Simple Search service ...")
     for i in coll.find({
         "media_type": {"$in": ["image", "video"]}, 
-        "scraped_date": {'$gte':start,'$lt':end}}).limit(500): #limit for testing
+        "scraped_date": {'$gte':start,'$lt':end}}).limit(100): #limit for testing
         try:
             print(i["_id"])
             res = {}
@@ -38,13 +38,16 @@ def IndexerSharechat():
             data = get_data(i)
             print("Sending media data to indexing queue via Simple Search server ...")
             response = index_media(str(data))
-            res["response_timestamp"] = str(datetime.utcnow())
-            res["response_text"] = json.loads(response) 
-            print("Updating Rabbitmq status in Sharechat db record")
-            coll.update_one(
-                {"_id": i["_id"]},
-                {"$set": {"simple_search.rabbitmq_status": res}})
-            c+=1
+            if response.status_code == 200:
+                res["response_timestamp"] = str(datetime.utcnow())
+                res["response_text"] = json.loads(response.text) 
+                print("Updating Rabbitmq status in Sharechat db record")
+                coll.update_one(
+                    {"_id": i["_id"]},
+                    {"$set": {"simple_search.rabbitmq_status": res}})
+                c+=1
+            else:
+                print(response.text, response.status_code)
         except Exception as e:
             print(logging.traceback.format_exc())
             print('Error sending data to queue', e)

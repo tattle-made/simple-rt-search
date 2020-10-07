@@ -25,4 +25,4 @@ def index_media(data):
     url = "http://localhost:5000/media"
     headers= {"content-type": "application/json"}
     response = requests.request("POST", url, headers=headers, data=data)
-    return response.text
+    return response

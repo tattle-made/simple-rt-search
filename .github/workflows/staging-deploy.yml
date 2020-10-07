@@ -46,6 +46,22 @@ jobs:
           name: tattletech/simple-search-indexer
           tags: ${{ steps.vars.outputs.sha_short }}
           workdir: src/indexer/
+          ß
+      - name: Set New Image
+        uses: steebchen/kubectl@master
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.K8_SECRET_DEV }}
+          KUBECTL_VERSION: "1.15"
+        with:
+          args: '"set image deployment/deployment-tattle-simplesearch-indexer container-tattle-simplesearch-indexer=tattletech/simple-search-indexer:${{steps.vars.outputs.sha_short}} "'
+
+      - name: Verify deployment
+        uses: steebchen/kubectl@master
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.K8_SECRET_DEV }}
+          KUBECTL_VERSION: "1.15"
+        with:
+          args: '"rollout status deployment/deployment-tattle-simplesearch-indexer"'
 
   server:
     runs-on: ubuntu-latest

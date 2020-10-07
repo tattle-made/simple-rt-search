@@ -46,7 +46,7 @@ jobs:
           name: tattletech/simple-search-indexer
           tags: ${{ steps.vars.outputs.sha_short }}
           workdir: src/indexer/
-          ß
+
       - name: Set New Image
         uses: steebchen/kubectl@master
         env:

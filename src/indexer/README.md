@@ -2,7 +2,7 @@
 
 an always on rabbit mq consumer that generates hashes of images and videos and stores them in an elastic search
 
-v 0.0.6
+v 0.0.7
 
 ```
 docker build -t indexer-test .

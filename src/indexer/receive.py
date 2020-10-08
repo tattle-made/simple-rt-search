@@ -17,6 +17,7 @@ connection = pika.BlockingConnection(
     pika.ConnectionParameters(host=environ.get('MQ_HOST'), credentials=credentials))
 channel = connection.channel()
 channel.queue_declare(queue='simple-search-index-queue', durable=True)
+q = channel.queue_declare(queue='simple-search-index-queue', durable=True, passive=True)
 channel.queue_declare(queue='simple-search-report-queue', durable=True)
 
 print('initializing db')
@@ -45,7 +46,7 @@ def callback(ch, method, properties, body):
     report["source_id"] = payload["source_id"]
     report["source"] = payload["source"]
     mimetype = payload['media_type']
-    
+
     try:
         print("Generating media hash ...")
         if mimetype == 'image':
@@ -87,12 +88,12 @@ def callback(ch, method, properties, body):
         print("Sending report to queue ...")
         report["status"] = "failed"
         report["failure_timestamp"] = str(datetime.utcnow())
-        ch.basic_publish(exchange='',
-            routing_key=properties.reply_to,
+        
+        channel.basic_publish(exchange='',
+            routing_key='simple-search-report-queue',
             properties=pika.BasicProperties(
-                correlation_id=properties.correlation_id, 
                 content_type='application/json',
-                delivery_mode=2),
+                delivery_mode=2), # make message persistent
             body=json.dumps(report))
         print("Indexing failure report sent to report queue")
         ch.basic_ack(delivery_tag=method.delivery_tag)

@@ -26,8 +26,10 @@ images/
 src/indexer/results
 src/indexer/tmp
 src/indexer/input
-.input/
-.output/
+src/indexer/.input/*
+src/indexer/.output/*
+!src/indexer/.input/.gitkeep 
+!src/indexer/.output/.gitkeep 
 
 # docker volumes for local development
 .docker/

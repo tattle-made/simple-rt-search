@@ -91,7 +91,6 @@ jobs:
           KUBECTL_VERSION: "1.15"
         with:
           args: '"set image deployment/deployment-tattle-simplesearch-rest container-tattle-simplesearch-rest=tattletech/simple-search-server:${{steps.vars.outputs.sha_short}}"'
-
       - name: Verify deployment
         uses: steebchen/kubectl@master
         env:

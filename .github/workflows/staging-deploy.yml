@@ -19,7 +19,7 @@ jobs:
         id: filter
         with:
           filters: |
-            indexer:
+            generate-and-store-hash:
                 - 'src/workers/generate-and-store-hash/**/*'
             server:
                 - 'src/api-server/**/*'

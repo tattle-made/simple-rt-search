@@ -35,13 +35,13 @@ services:
       - 5672:5672
       - 15672:15672
 
-  indexer:
+  generate-and-store-hash:
     build:
-      context: ./src/indexer
+      context: ./src/workers/generate-and-store-hash
       dockerfile: Dockerfile
     volumes:
-      - ./src/indexer/:/app
-    env_file: ./src/indexer/.env
+      - ./src/workers/generate-and-store-hash/:/app
+    env_file: ./src/workers/generate-and-store-hash/.env
     command: tail -f /dev/null
 
   search_api:
@@ -54,4 +54,4 @@ services:
     env_file: ./src/api-server/.env
     ports:
       - 5000:5000
-    command: python server.py
+    command: tail -f /dev/null

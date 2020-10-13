@@ -101,7 +101,7 @@ jobs:
 
   notify:
     runs-on: ubuntu-latest
-    needs: [indexer, server]
+    needs: [generate-and-store-hash, server]
     if: ${{ always() }}
     steps:
       - name: Notify on Slack

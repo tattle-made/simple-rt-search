@@ -11,14 +11,19 @@ from pymongo import MongoClient
 load_dotenv()
 
 
-credentials = pika.PlainCredentials(environ.get(
-    'MQ_USERNAME'), environ.get('MQ_PASSWORD'))
-connection = pika.BlockingConnection(
-    pika.ConnectionParameters(host=environ.get('MQ_HOST'), credentials=credentials))
-channel = connection.channel()
-channel.queue_declare(queue='simple-search-index-queue', durable=True)
-q = channel.queue_declare(queue='simple-search-index-queue', durable=True, passive=True)
-channel.queue_declare(queue='simple-search-report-queue', durable=True)
+try:
+    credentials = pika.PlainCredentials(environ.get(
+        'MQ_USERNAME'), environ.get('MQ_PASSWORD'))
+    connection = pika.BlockingConnection(
+        pika.ConnectionParameters(host=environ.get('MQ_HOST'), credentials=credentials))
+    channel = connection.channel()
+    channel.queue_declare(queue='simple-search-index-queue', durable=True)
+    q = channel.queue_declare(
+        queue='simple-search-index-queue', durable=True, passive=True)
+    channel.queue_declare(queue='simple-search-report-queue', durable=True)
+    print('Success Connecting to RabbitMQ')
+except Exception as e:
+    print('Error Connecting to RabbitMQ', e)
 
 try:
     mongo_url = "mongodb+srv://"+environ.get("SIMPLESEARCH_DB_USERNAME")+":"+environ.get(
@@ -26,8 +31,9 @@ try:
     cli = MongoClient(mongo_url)
     db = cli[environ.get("SIMPLESEARCH_DB_NAME")]
     coll = db[environ.get("SIMPLESEARCH_DB_COLLECTION")]
+    print('Success Connecting to MongoDB')
 except Exception as e:
-    print('Error Connecting to Mongo ', e)
+    print('Error Connecting to MongoDB', e)
 
 
 def store_hash_in_db(collection_name, doc):
@@ -99,13 +105,13 @@ def callback(ch, method, properties, body):
         print("Sending report to queue ...")
         report["status"] = "failed"
         report["failure_timestamp"] = str(datetime.utcnow())
-        
+
         channel.basic_publish(exchange='',
-            routing_key='simple-search-report-queue',
-            properties=pika.BasicProperties(
-                content_type='application/json',
-                delivery_mode=2), # make message persistent
-            body=json.dumps(report))
+                              routing_key='simple-search-report-queue',
+                              properties=pika.BasicProperties(
+                                  content_type='application/json',
+                                  delivery_mode=2),  # make message persistent
+                              body=json.dumps(report))
         print("Indexing failure report sent to report queue")
         ch.basic_ack(delivery_tag=method.delivery_tag)
 

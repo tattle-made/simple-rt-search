@@ -46,6 +46,8 @@ services:
 
   search_api:
     container_name: simple-rt-search-api
+    depends_on:
+      - rabbitmq
     build:
       context: ./src/api-server
       dockerfile: Dockerfile
@@ -54,4 +56,4 @@ services:
     env_file: ./src/api-server/.env
     ports:
       - 5000:5000
-    command: tail -f /dev/null
+    command: python server.py

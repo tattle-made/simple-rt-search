@@ -60,6 +60,13 @@ docker exec -it rabbitmq rabbitmq-plugins enable rabbitmq_management
 docker exec -it simple-rt-indexer /bin/sh
 ```
 
+```
+# index in a kubernetes cluster
+curl -H "Content-Type: application/json" -X POST -v --data '{"file_url":"https://tattle-media.s3.amazonaws.com/test-data/videos/cf5ddef9-4aea-4439-a318-4cdeea8a151b.mp4","media_type":"video","bucket_name":"tattle-media", "file_name":"cf5ddef9-4aea-4439-a318-4cdeea8a151b.mp4", "filepath_prefix":"test-data/videos/" ,"source":"khoj, "source_id":"23423423432","metadata":{}}' http://service-tattle-simplesearch-rest/media
+# index normally
+curl -H "Content-Type: application/json" -X POST -v --data '{"file_url":"https://tattle-media.s3.amazonaws.com/test-data/videos/cf5ddef9-4aea-4439-a318-4cdeea8a151b.mp4","media_type":"video","bucket_name":"tattle-media","file_name":"cf5ddef9-4aea-4439-a318-4cdeea8a151b.mp4","filepath_prefix":"test-data/videos/","source":"khoj","source_id":"23423423432","metadata":{}}' http://localhost:5000/media
+```
+
 # Caveat
 
 We find that the pip-compile step takes too long to finish during docker build. So we find it useful to generate it locally on our machines and check in accurate requirements.txt file in the git repo

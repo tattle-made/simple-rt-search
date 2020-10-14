@@ -5,20 +5,24 @@ from flask import jsonify, request
 from send import add_job_to_queue
 import datetime
 
+
 class Media(Resource):
     def __init__(self):
         self.post_request_parser = reqparse.RequestParser()
-        self.post_request_parser.add_argument('file_url', type=str, help='file url is a mandatory field')
-        self.post_request_parser.add_argument('file_name', type=str)        
+        self.post_request_parser.add_argument(
+            'file_url', type=str, help='file url is a mandatory field')
+        self.post_request_parser.add_argument('file_name', type=str)
         self.post_request_parser.add_argument('bucket_name', type=str)
         self.post_request_parser.add_argument('filepath_prefix', type=str)
-        self.post_request_parser.add_argument('media_type', type=str, choices=('video', 'audio', 'image'), help='The file type of media item. Acceptable values : video, image, audio', required=True)
+        self.post_request_parser.add_argument('media_type', type=str, choices=(
+            'video', 'audio', 'image'), help='The file type of media item. Acceptable values : video, image, audio', required=True)
         self.post_request_parser.add_argument('source', type=str)
         self.post_request_parser.add_argument('source_id', type=str)
-        self.post_request_parser.add_argument('metadata', type=dict, help='Any metadata that you want to store in the search index. Use Judiciously')
-        
+        self.post_request_parser.add_argument(
+            'metadata', type=dict, help='Any metadata that you want to store in the search index. Use Judiciously')
 
     # TODO add validation for supported mimetypes : image/jpeg, image/png, audio/mpeg, audio/wav, video/mpeg
+
     def post(self):
         print("Server received request for queuing media")
         try:
@@ -33,9 +37,7 @@ class Media(Resource):
             # add_job_to_queue(args)
             # print("Queued at: ", str(datetime.datetime.utcnow()))
             return 'media enqueued', 200
-        
+
         except Exception as e:
-            print('error in finding media : ', e)
+            print('Error in adding media to index queue : ', e)
             return 'Error indexing media : '+str(e), 500
-        
-        

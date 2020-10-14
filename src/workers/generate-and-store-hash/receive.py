@@ -1,3 +1,4 @@
+from services.mongo import Mongo
 from helper import get_video_hash_from_s3_file, get_image_hash_from_s3_file, get_audio_hash_from_s3_file
 import logging
 from datetime import datetime
@@ -10,6 +11,7 @@ import pymongo
 from pymongo import MongoClient
 load_dotenv()
 
+mongo = Mongo.instance()
 
 try:
     credentials = pika.PlainCredentials(environ.get(
@@ -25,20 +27,13 @@ try:
 except Exception as e:
     print('Error Connecting to RabbitMQ', e)
 
-try:
-    mongo_url = "mongodb+srv://"+environ.get("SIMPLESEARCH_DB_USERNAME")+":"+environ.get(
-        "SIMPLESEARCH_DB_PASSWORD")+"@tattle-data-fkpmg.mongodb.net/test?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE"
-    cli = MongoClient(mongo_url)
-    db = cli[environ.get("SIMPLESEARCH_DB_NAME")]
-    coll = db[environ.get("SIMPLESEARCH_DB_COLLECTION")]
-    print('Success Connecting to MongoDB')
-except Exception as e:
-    print('Error Connecting to MongoDB', e)
-
 
 def store_hash_in_db(collection_name, doc):
+    global mongo
+    print(mongo)
+    print(mongo.db)
     try:
-        doc_id = db[collection_name].insert_one(doc).inserted_id
+        doc_id = mongo.db[collection_name].insert_one(doc).inserted_id
         return doc_id
     except Exception as e:
         print('error storing hash in db', e)

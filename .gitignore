@@ -21,6 +21,9 @@ include/
 bin/
 share/
 
+# cached files
+*.pyc
+
 # Temporary files associated with video indexing
 images/
 src/indexer/results

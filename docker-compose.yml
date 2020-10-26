@@ -35,14 +35,14 @@ services:
       - 5672:5672
       - 15672:15672
 
-  generate-and-store-hash:
-    build:
-      context: ./src/workers/generate-and-store-hash
-      dockerfile: Dockerfile
-    volumes:
-      - ./src/workers/generate-and-store-hash/:/app
-    env_file: ./src/workers/generate-and-store-hash/.env
-    command: tail -f /dev/null
+  # generate-and-store-hash:
+  # build:
+  # context: ./src/workers/generate-and-store-hash
+  # dockerfile: Dockerfile
+  # volumes:
+  # - ./src/workers/generate-and-store-hash/:/app
+  # env_file: ./src/workers/generate-and-store-hash/.env
+  # command: tail -f /dev/null
 
   search_api:
     container_name: simple-rt-search-api
@@ -56,4 +56,4 @@ services:
     env_file: ./src/api-server/.env
     ports:
       - 5000:5000
-    command: python server.py
+    command: tail -f /dev/null

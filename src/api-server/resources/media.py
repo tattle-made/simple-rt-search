@@ -30,7 +30,7 @@ class Media(Resource):
             # print('POST /media filename : ', args['file_name'], " from bucket : ", args['bucket_name'])
             # indexer = IndexMedia()
             # response = indexer.add_job_to_queue(args)
-            print("Adding requested job to indexing queue ...")
+            print("Adding requested job to indexing queue")
             # indexer.add_job_to_queue(args)
             add_job_to_queue(args)
             print("Job added")

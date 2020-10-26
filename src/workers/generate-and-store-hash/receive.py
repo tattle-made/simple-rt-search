@@ -1,3 +1,4 @@
+from services.mongo import Mongo
 from helper import get_video_hash_from_s3_file, get_image_hash_from_s3_file, get_audio_hash_from_s3_file
 import logging
 from datetime import datetime
@@ -10,29 +11,29 @@ import pymongo
 from pymongo import MongoClient
 load_dotenv()
 
-
-credentials = pika.PlainCredentials(environ.get(
-    'MQ_USERNAME'), environ.get('MQ_PASSWORD'))
-connection = pika.BlockingConnection(
-    pika.ConnectionParameters(host=environ.get('MQ_HOST'), credentials=credentials))
-channel = connection.channel()
-channel.queue_declare(queue='simple-search-index-queue', durable=True)
-q = channel.queue_declare(queue='simple-search-index-queue', durable=True, passive=True)
-channel.queue_declare(queue='simple-search-report-queue', durable=True)
+mongo = Mongo.instance()
 
 try:
-    mongo_url = "mongodb+srv://"+environ.get("SIMPLESEARCH_DB_USERNAME")+":"+environ.get(
-        "SIMPLESEARCH_DB_PASSWORD")+"@tattle-data-fkpmg.mongodb.net/test?retryWrites=true&w=majority&ssl=true&ssl_cert_reqs=CERT_NONE"
-    cli = MongoClient(mongo_url)
-    db = cli[environ.get("SIMPLESEARCH_DB_NAME")]
-    coll = db[environ.get("SIMPLESEARCH_DB_COLLECTION")]
+    credentials = pika.PlainCredentials(environ.get(
+        'MQ_USERNAME'), environ.get('MQ_PASSWORD'))
+    connection = pika.BlockingConnection(
+        pika.ConnectionParameters(host=environ.get('MQ_HOST'), credentials=credentials))
+    channel = connection.channel()
+    channel.queue_declare(queue='simple-search-index-queue', durable=True)
+    q = channel.queue_declare(
+        queue='simple-search-index-queue', durable=True, passive=True)
+    channel.queue_declare(queue='simple-search-report-queue', durable=True)
+    print('Success Connecting to RabbitMQ')
 except Exception as e:
-    print('Error Connecting to Mongo ', e)
+    print('Error Connecting to RabbitMQ', e)
 
 
 def store_hash_in_db(collection_name, doc):
+    global mongo
+    print(mongo)
+    print(mongo.db)
     try:
-        doc_id = db[collection_name].insert_one(doc).inserted_id
+        doc_id = mongo.db[collection_name].insert_one(doc).inserted_id
         return doc_id
     except Exception as e:
         print('error storing hash in db', e)
@@ -99,13 +100,13 @@ def callback(ch, method, properties, body):
         print("Sending report to queue ...")
         report["status"] = "failed"
         report["failure_timestamp"] = str(datetime.utcnow())
-        
+
         channel.basic_publish(exchange='',
-            routing_key='simple-search-report-queue',
-            properties=pika.BasicProperties(
-                content_type='application/json',
-                delivery_mode=2), # make message persistent
-            body=json.dumps(report))
+                              routing_key='simple-search-report-queue',
+                              properties=pika.BasicProperties(
+                                  content_type='application/json',
+                                  delivery_mode=2),  # make message persistent
+                              body=json.dumps(report))
         print("Indexing failure report sent to report queue")
         ch.basic_ack(delivery_tag=method.delivery_tag)
 

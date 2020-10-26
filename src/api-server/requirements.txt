@@ -5,15 +5,56 @@
 #    pip-compile requirements.in
 #
 aniso8601==8.0.0          # via flask-restful
+boto3==1.14.51            # via -r requirements.in
+botocore==1.17.63         # via boto3, s3transfer
+certifi==2020.6.20        # via matplotlib, requests
+chardet==3.0.4            # via requests
 click==7.1.2              # via flask
+cycler==0.10.0            # via matplotlib
+decorator==4.4.2          # via moviepy, networkx
+docutils==0.15.2          # via botocore
 flask-cors==3.0.9         # via -r requirements.in
 flask-restful==0.3.8      # via -r requirements.in
 flask==1.1.2              # via flask-cors, flask-restful
+gunicorn==20.0.4          # via -r requirements.in
+idna==2.10                # via requests
+imagehash==4.1.0          # via -r requirements.in
+imageio-ffmpeg==0.4.2     # via moviepy
+imageio==2.9.0            # via moviepy, scikit-image
+imutils==0.5.3            # via katna
 itsdangerous==1.1.0       # via flask
 jinja2==2.11.2            # via flask
+jmespath==0.10.0          # via boto3, botocore
+joblib==0.17.0            # via scikit-learn
+katna==0.4.1.4            # via -r requirements.in
+kiwisolver==1.2.0         # via matplotlib
 markupsafe==1.1.1         # via jinja2
+matplotlib==3.3.2         # via scikit-image
+moviepy==1.0.3            # via -r requirements.in, katna
+mp3hash==0.1              # via -r requirements.in
+networkx==2.5             # via scikit-image
+numpy==1.19.2             # via imagehash, imageio, katna, matplotlib, moviepy, opencv-contrib-python, pywavelets, scikit-image, scikit-learn, scipy, tifffile
+opencv-contrib-python==4.4.0.42  # via -r requirements.in, katna
 pika==1.1.0               # via -r requirements.in
+pillow==7.2.0             # via -r requirements.in, imagehash, imageio, matplotlib, scikit-image
+proglog==0.1.9            # via moviepy
+pymongo==3.11.0           # via -r requirements.in
+pyparsing==2.4.7          # via matplotlib
+python-dateutil==2.8.1    # via botocore, matplotlib
 python-dotenv==0.14.0     # via -r requirements.in
 pytz==2020.1              # via flask-restful
-six==1.15.0               # via flask-cors, flask-restful
+pywavelets==1.1.1         # via imagehash, scikit-image
+requests==2.24.0          # via katna, moviepy
+s3transfer==0.3.3         # via boto3
+scikit-image==0.17.2      # via katna
+scikit-learn==0.23.2      # via katna
+scipy==1.5.2              # via imagehash, katna, scikit-image, scikit-learn
+six==1.15.0               # via flask-cors, flask-restful, imagehash, python-dateutil
+threadpoolctl==2.1.0      # via scikit-learn
+tifffile==2020.9.3        # via scikit-image
+tqdm==4.50.2              # via moviepy, proglog
+urllib3==1.25.10          # via botocore, requests
 werkzeug==1.0.1           # via flask
+
+# The following packages are considered to be unsafe in a requirements file:
+# setuptools

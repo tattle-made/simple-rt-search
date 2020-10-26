@@ -26,10 +26,10 @@ images/
 src/indexer/results
 src/indexer/tmp
 src/indexer/input
-src/indexer/.input/*
-src/indexer/.output/*
-!src/indexer/.input/.gitkeep 
-!src/indexer/.output/.gitkeep 
+src/workers/generate-and-store-hash/.input/*
+src/workers/generate-and-store-hash/.output/*
+!src/workers/generate-and-store-hash/.input/.gitkeep 
+!src/workers/generate-and-store-hash/.output/.gitkeep 
 
 # docker volumes for local development
 .docker/

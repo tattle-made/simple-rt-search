@@ -35,17 +35,19 @@ services:
       - 5672:5672
       - 15672:15672
 
-  indexer:
+  generate-and-store-hash:
     build:
-      context: ./src/indexer
+      context: ./src/workers/generate-and-store-hash
       dockerfile: Dockerfile
     volumes:
-      - ./src/indexer/:/app
-    env_file: ./src/indexer/.env
+      - ./src/workers/generate-and-store-hash/:/app
+    env_file: ./src/workers/generate-and-store-hash/.env
     command: tail -f /dev/null
 
   search_api:
     container_name: simple-rt-search-api
+    depends_on:
+      - rabbitmq
     build:
       context: ./src/api-server
       dockerfile: Dockerfile

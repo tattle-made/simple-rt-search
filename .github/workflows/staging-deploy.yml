@@ -44,7 +44,7 @@ jobs:
         with:
           username: tattletech
           password: ${{ secrets.DOCKER_PASSWORD }}
-          name: tattletech/simple-rt-search.worker.generate-and-store-hash
+          name: tattletech/simple-rt-search-worker-generate-and-store-hash
           tags: ${{ steps.vars.outputs.sha_short }}
           workdir: src/workers/generate-and-store-hash
 
@@ -82,7 +82,7 @@ jobs:
         with:
           username: tattletech
           password: ${{ secrets.DOCKER_PASSWORD }}
-          name: tattletech/simple-search-server
+          name: tattletech/simple-rt-search-api-rest
           tags: ${{ steps.vars.outputs.sha_short }}
           workdir: src/api-server/
       # - name: Set New Image

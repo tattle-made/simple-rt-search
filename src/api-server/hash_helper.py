@@ -82,7 +82,7 @@ def extract_and_save_audio(path_to_video):
 
 
 def hash_image(path_to_image):
-    return str(imagehash.average_hash(Image.open(path_to_image)))
+    return str(imagehash.phash(Image.open(path_to_image)))
 
 
 def hash_audio(path_to_audio):

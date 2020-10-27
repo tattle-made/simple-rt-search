@@ -60,7 +60,9 @@ def callback(ch, method, properties, body):
                 "hash": media_hash,
                 "metadata": payload['metadata'],
                 "created_at": timestamp,
-                "updated_at": timestamp
+                "updated_at": timestamp,
+                "source": payload["source"],
+                "source_id": payload["source_id"]
             }
             print("Storing hash in Simple Search db ...")
             index_id = mongo_controller.store_hash_doc(mimetype_collection_map[mimetype], document_to_be_indexed)

@@ -41,9 +41,6 @@ class MQ():
                            properties=pika.BasicProperties(
                                delivery_mode=2),  # make message persistent
                            body=json.dumps(payload))
-            
-            
-
 
 mq = MQ()
 

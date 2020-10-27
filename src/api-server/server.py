@@ -1,4 +1,5 @@
 from controllers.queue_controller import queue_controller
+from controllers.mongo_controller import mongo_controller
 from flask import Flask
 from flask_cors import CORS
 from flask_restful import Resource, Api
@@ -10,7 +11,7 @@ load_dotenv()
 
 queue_controller.connect()
 queue_controller.declare_queues()
-# mongo.connect()
+mongo_controller.connect()
 
 app = Flask(__name__)
 CORS(app)

@@ -1,4 +1,5 @@
-from services.mongo import Mongo
+from controllers.queue_controller import queue_controller
+from controllers.mongo_controller import mongo_controller
 from helper import get_video_hash_from_s3_file, get_image_hash_from_s3_file, get_audio_hash_from_s3_file
 import logging
 from datetime import datetime
@@ -11,34 +12,18 @@ import pymongo
 from pymongo import MongoClient
 load_dotenv()
 
-mongo = Mongo.instance()
+try:
+    queue_controller.connect()
+    queue_controller.declare_queues()
+except Exception as e:
+    print('Error Connecting to or Declaring Queues')
+    exit()
 
 try:
-    credentials = pika.PlainCredentials(environ.get(
-        'MQ_USERNAME'), environ.get('MQ_PASSWORD'))
-    connection = pika.BlockingConnection(
-        pika.ConnectionParameters(host=environ.get('MQ_HOST'), credentials=credentials))
-    channel = connection.channel()
-    channel.queue_declare(queue='simple-search-index-queue', durable=True)
-    q = channel.queue_declare(
-        queue='simple-search-index-queue', durable=True, passive=True)
-    channel.queue_declare(queue='simple-search-report-queue', durable=True)
-    print('Success Connecting to RabbitMQ')
+    mongo_controller.connect()
 except Exception as e:
-    print('Error Connecting to RabbitMQ', e)
-
-
-def store_hash_in_db(collection_name, doc):
-    global mongo
-    print(mongo)
-    print(mongo.db)
-    try:
-        doc_id = mongo.db[collection_name].insert_one(doc).inserted_id
-        return doc_id
-    except Exception as e:
-        print('error storing hash in db', e)
-        raise
-
+    print('Error connecting to Mongo')
+    exit()
 
 mimetype_collection_map = {
     'image': 'images',
@@ -78,20 +63,14 @@ def callback(ch, method, properties, body):
                 "updated_at": timestamp
             }
             print("Storing hash in Simple Search db ...")
-            index_id = str(store_hash_in_db(
-                mimetype_collection_map[mimetype], document_to_be_indexed))
+            index_id = mongo_controller.store_hash_doc(mimetype_collection_map[mimetype], document_to_be_indexed)
             print("Sending report to queue ...")
+            
             report["index_timestamp"] = timestamp
             report["index_id"] = index_id
             report["status"] = "indexed"
-
-            channel.basic_publish(exchange='',
-                                  routing_key='simple-search-report-queue',
-                                  properties=pika.BasicProperties(
-                                      content_type='application/json',
-                                      delivery_mode=2),  # make message persistent
-                                  body=json.dumps(report))
-
+            queue_controller.add_data_to_report_queue(report)
+            
             print("Indexing success report sent to report queue")
             ch.basic_ack(delivery_tag=method.delivery_tag)
     except Exception as e:
@@ -110,9 +89,8 @@ def callback(ch, method, properties, body):
         print("Indexing failure report sent to report queue")
         ch.basic_ack(delivery_tag=method.delivery_tag)
 
+queue_controller.start_consuming('simple-search-index-queue', callback)
 
-channel.basic_consume(queue='simple-search-index-queue',
-                      on_message_callback=callback)
 
-print(' [*] Waiting for messages. To exit press CTRL+C ')
-channel.start_consuming()
+
+

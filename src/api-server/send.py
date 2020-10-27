@@ -7,4 +7,4 @@ from controllers.queue_controller import queue_controller
 
 
 def add_job_to_queue(payload):
-    queue_controller.add_data_to_index_queue(payload=json.dumps(payload))
+    queue_controller.add_data_to_index_queue(payload=payload)

@@ -22,5 +22,11 @@ class QueueController:
         self.queue.publish_to_queue(
             queue_name='simple-search-report-queue', payload=payload)
 
+    def start_consuming(self, queue_name, callback):
+        self.queue.channel.basic_consume(queue=queue_name,
+                      on_message_callback=callback)
+
+        print(' [*] Waiting for messages. To exit press CTRL+C ')
+        self.queue.channel.start_consuming()
 
 queue_controller = QueueController()

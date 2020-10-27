@@ -23,6 +23,7 @@ class MQ():
             print('Success Connecting to RabbitMQ')
         except Exception as e:
             print('Error Connecting to RabbitMQ ', e)
+            raise
 
     def is_connected(self):
         return self.channel.is_open

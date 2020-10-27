@@ -35,7 +35,13 @@ class MQ():
                                            delivery_mode=2),  # make message persistent
                                        body=json.dumps(payload))
         else:
-            raise Exception('Connection Lost. Cannot publish payload')
+            self.connect()
+            self.channel.basic_publish(exchange='',
+                           routing_key=queue_name,
+                           properties=pika.BasicProperties(
+                               delivery_mode=2),  # make message persistent
+                           body=json.dumps(payload))
+            
             
 
 

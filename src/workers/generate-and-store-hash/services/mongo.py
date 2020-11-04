@@ -1,6 +1,7 @@
 import pymongo
 from pymongo import MongoClient
 from os import environ
+import logging
 
 class Mongo():
     def __init__(self):
@@ -12,16 +13,18 @@ class Mongo():
             self.cli = MongoClient(self.mongo_url)
             self.db = self.cli[self.db_name]
             print('Success Connecting to MongoDB')
-        except Exception as e:
-            print('Error Connecting to MongoDB', e)
+        except Exception:
+            print('Error Connecting to MongoDB')
+            print(logging.traceback.format_exc())
             raise
 
     def write(self, collection_name, document):
         try:
             doc_id = self.db[collection_name].insert_one(document).inserted_id
             return str(doc_id)
-        except Exception as e:
-            print('error storing hash in db', e)
+        except Exception:
+            print('error storing hash in db')
+            print(logging.traceback.format_exc())
             raise
 
     # condition ex : {"hash": media_hash}

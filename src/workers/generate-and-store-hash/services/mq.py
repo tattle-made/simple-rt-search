@@ -1,7 +1,7 @@
 from os import environ
 import pika
 import json
-
+import logging
 
 class MQ():
     def __init__(self):
@@ -21,8 +21,9 @@ class MQ():
                 ))
             self.channel = connection.channel()
             print('Success Connecting to RabbitMQ')
-        except Exception as e:
-            print('Error Connecting to RabbitMQ ', e)
+        except Exception:
+            print('Error Connecting to RabbitMQ ')
+            print(logging.traceback.format_exc())
             raise
 
     def is_connected(self):

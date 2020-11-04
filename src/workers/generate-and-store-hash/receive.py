@@ -36,7 +36,8 @@ mimetype_collection_map = {
 
 
 def callback(ch, method, properties, body):
-    print("MESSAGE RECEIVED %r" % body)
+    # print("MESSAGE RECEIVED %r" % body)
+    print("MESSAGE RECEIVED")
     start = perf_counter()
     payload = json.loads(body)
     report = {}
@@ -56,7 +57,8 @@ def callback(ch, method, properties, body):
             media_hash, success = get_audio_hash_from_s3_file(
                 payload['file_name'], payload['bucket_name'], payload['filepath_prefix'])
 
-        print(media_hash, success)
+        # print(media_hash, success)
+        print("Hash: ", media_hash)
         timestamp = str(datetime.utcnow())
         if success == True:
             print("Media hash generated successfully")
@@ -70,7 +72,7 @@ def callback(ch, method, properties, body):
             }
             print("Storing hash in Simple Search db ...")
             index_id = mongo_controller.store_hash_doc(mimetype_collection_map[mimetype], document_to_be_indexed)
-            delta = start - perf_counter()
+            delta = perf_counter() - start 
             print("Time taken: ", delta)
             print("Sending report to queue ...")
             
@@ -80,6 +82,7 @@ def callback(ch, method, properties, body):
             queue_controller.add_data_to_report_queue(report)
             
             print("Indexing success report sent to report queue")
+            print("")
             ch.basic_ack(delivery_tag=method.delivery_tag)
     except Exception as e:
         print(logging.traceback.format_exc())

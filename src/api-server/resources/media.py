@@ -4,6 +4,7 @@ import json
 from flask import jsonify, request
 from send import add_job_to_queue
 import datetime
+import logging
 
 
 class Media(Resource):
@@ -33,4 +34,5 @@ class Media(Resource):
             return 'media enqueued', 200
 
         except Exception as e:
+            print(logging.traceback.format_exc())
             return 'Error indexing media : '+str(e), 500

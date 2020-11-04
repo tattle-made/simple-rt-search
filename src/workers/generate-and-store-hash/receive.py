@@ -1,7 +1,8 @@
 from services.mongo import Mongo
 from helper import get_video_hash_from_s3_file, get_image_hash_from_s3_file, get_audio_hash_from_s3_file
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
+from time import perf_counter
 import sys
 from os import environ
 import pika
@@ -10,6 +11,7 @@ from dotenv import load_dotenv
 import pymongo
 from pymongo import MongoClient
 load_dotenv()
+import logging
 
 mongo = Mongo.instance()
 
@@ -26,6 +28,7 @@ try:
     print('Success Connecting to RabbitMQ')
 except Exception as e:
     print('Error Connecting to RabbitMQ', e)
+    print(logging.traceback.format_exc())
 
 
 def store_hash_in_db(collection_name, doc):
@@ -49,6 +52,7 @@ mimetype_collection_map = {
 
 def callback(ch, method, properties, body):
     print("MESSAGE RECEIVED %r" % body)
+    start = perf_counter()
     payload = json.loads(body)
     report = {}
     report["source_id"] = payload["source_id"]
@@ -84,17 +88,21 @@ def callback(ch, method, properties, body):
             report["index_timestamp"] = timestamp
             report["index_id"] = index_id
             report["status"] = "indexed"
-
+            delta = perf_counter() - start
+            print(report)
+            print("Time taken for indexing this media: ", delta)
+            print("")
             channel.basic_publish(exchange='',
                                   routing_key='simple-search-report-queue',
                                   properties=pika.BasicProperties(
                                       content_type='application/json',
                                       delivery_mode=2),  # make message persistent
                                   body=json.dumps(report))
-
+            print("Indexing report: ", report)
             print("Indexing success report sent to report queue")
             ch.basic_ack(delivery_tag=method.delivery_tag)
     except Exception as e:
+        print(logging.traceback.format_exc())
         print('Error indexing media ', e)
         print("Media hashing failed")
         print("Sending report to queue ...")

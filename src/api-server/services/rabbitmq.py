@@ -1,6 +1,6 @@
 from os import environ
 import pika
-
+import logging
 
 class RabbitMQ():
     _instance = None
@@ -30,6 +30,7 @@ class RabbitMQ():
                 print('Success Connecting to RabbitMQ')
             except Exception as e:
                 print('Error Connecting to RabbitMQ ', e)
+                print(logging.traceback.format_exc())
         return cls._instance
 
     def connect(self):

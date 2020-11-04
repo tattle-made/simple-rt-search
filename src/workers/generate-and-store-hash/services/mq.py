@@ -17,7 +17,9 @@ class MQ():
             connection = pika.BlockingConnection(
                 pika.ConnectionParameters(
                     host=self.mq_host,
-                    credentials=credentials
+                    credentials=credentials,
+                    heartbeat=600,
+                    blocked_connection_timeout=300
                 ))
             self.channel = connection.channel()
             print('Success Connecting to RabbitMQ')

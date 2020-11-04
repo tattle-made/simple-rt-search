@@ -166,7 +166,8 @@ def get_video_hash_from_local_file(fileName):
         return '', False
 
 def get_video_hash_from_s3_file(fileName, bucketName, filePathPrefix):
-    print('downloading ', fileName, 'from ', bucketName)
+    # print('downloading ', fileName, 'from ', bucketName)
+    print("Downloading file")
     try:
         with open(INPUT_FOLDER+fileName, 'wb') as f:
             s3.download_fileobj(bucketName, filePathPrefix + fileName, f)

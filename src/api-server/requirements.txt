@@ -55,6 +55,7 @@ tifffile==2020.9.3        # via scikit-image
 tqdm==4.50.2              # via moviepy, proglog
 urllib3==1.25.10          # via botocore, requests
 werkzeug==1.0.1           # via flask
+dnspython==1.16.0
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

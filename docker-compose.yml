@@ -36,6 +36,7 @@ services:
       - 15672:15672
 
   generate-and-store-hash:
+    container_name: generate-and-store-hash
     build:
       context: ./src/workers/generate-and-store-hash
       dockerfile: Dockerfile
@@ -56,4 +57,4 @@ services:
     env_file: ./src/api-server/.env
     ports:
       - 5000:5000
-    command: python server.py
+    command: tail -f /dev/null

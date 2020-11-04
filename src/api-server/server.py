@@ -1,5 +1,5 @@
-from services.rabbitmq import RabbitMQ
-
+from controllers.queue_controller import queue_controller
+from controllers.mongo_controller import mongo_controller
 from flask import Flask
 from flask_cors import CORS
 from flask_restful import Resource, Api
@@ -9,8 +9,9 @@ from resources.health import Health
 from dotenv import load_dotenv
 load_dotenv()
 
-RabbitMQ.instance()
-# mongo.connect()
+queue_controller.connect()
+queue_controller.declare_queues()
+mongo_controller.connect()
 
 app = Flask(__name__)
 CORS(app)

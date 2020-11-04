@@ -12,12 +12,12 @@ RUN apt-get install -y libgl1-mesa-glx libglib2.0-0
 # RUN apt-get install -y vim
 
 RUN pip install --upgrade pip
-RUN pip install pip-tools
+# RUN pip install pip-tools
 # RUN pip-compile requirements.in
 RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 5000
 
 # CMD gunicorn --preload -w 2 --threads 1 --bind 0.0.0.0:5000 server:application
-# CMD tail -f /dev/null
-CMD python server.py
+CMD tail -f /dev/null
+# CMD python server.py

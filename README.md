@@ -83,3 +83,5 @@ Join our [slack channel](https://join.slack.com/t/tattle-workspace/shared_invite
 ## Want to get help deploying it into your organisation?
 
 contact us at admin@tattle.co.in
+
+v 0.0.1

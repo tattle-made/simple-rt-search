@@ -10,6 +10,8 @@ import shutil
 import multiprocessing
 import cv2
 import boto3
+import logging
+import sys
 
 s3 = boto3.client('s3')
 
@@ -29,9 +31,9 @@ def get_key_frames_from_video(path_to_video, no_of_frames):
             no_of_frames=no_of_frames, file_path=path_to_video)
         print('end extraction')
         return images
-    except Exception as e:
+    except Exception:
         print('error getting frames from videos')
-        print(e)
+        print(logging.traceback.format_exc())
 
 
 def write_images_into_folder(images, no_of_frames, path):
@@ -43,9 +45,9 @@ def write_images_into_folder(images, no_of_frames, path):
         for i in range(no_of_frames):
             print('saving '+str(i+1)+' frame')
             video.save_frame_to_disk(images[i], file_path=path, file_name="image" + str(i + 1), file_ext=".png")
-    except Exception as e:
+    except Exception:
         print('error saving extracted frames to disk')
-        print(e)
+        print(logging.traceback.format_exc())
 
 
 def get_audio_from_video(path_to_video):
@@ -65,9 +67,9 @@ def extract_and_save_keyframes(path_to_video, no_of_frames, result_folder_path):
             cv2.imwrite("./results/image1.jpg", image)
         else:
             print('did not extract frame correctly')
-    except Exception as e:
+    except Exception:
         print('error extracting and saving keyframe')
-        print(e)
+        print(logging.traceback.format_exc())
     # print('extract and save keyframes')
     # try:
         # key_frames = get_key_frames_from_video(path_to_video, no_of_frames)
@@ -137,32 +139,37 @@ def compute_video_hash(path_to_video):
     feature_hash = get_feature_hash_from_video(path_to_video)
     return xor_elements(feature_hash)
     
-def extract_one_frame(fileName):
+def extract_one_frame(fileName, fname):
     try:
         vidcap = cv2.VideoCapture(INPUT_FOLDER + fileName)
         # frame_count = vidcap.get(cv2.CAP_PROP_FRAME_COUNT)
         # print('duration : ', duration, 'frame count: ', frame_count)
-        
+        if not vidcap.isOpened():
+            print("Error opening video file {}".format(INPUT_FOLDER + fileName))
+            return
         vidcap.set(cv2.CAP_PROP_POS_MSEC, 2000)
         success, image = vidcap.read()
         if success:
-            cv2.imwrite(OUTPUT_FOLDER+fileName+".png", image)
+            cv2.imwrite(OUTPUT_FOLDER + fname + ".png", image)
         else:
             print('did not extract frame correctly')
-    except Exception as e:
-        print('error extracting and saving keyframe ', e)
+    except Exception:
+        print('error extracting and saving keyframe ')
+        print(logging.traceback.format_exc())
 
 def get_video_hash_from_local_file(fileName):
+    fname = fileName.split(".mp4")[0]
     try:
-        image_proc = multiprocessing.Process(target=extract_one_frame, args=[fileName])
+        image_proc = multiprocessing.Process(target=extract_one_frame, args=[fileName, fname])
         image_proc.start()
         image_proc.join()
-        hash = hash_image(OUTPUT_FOLDER + fileName+".png")
-        os.remove(OUTPUT_FOLDER + fileName + ".png")
+        hash = hash_image(OUTPUT_FOLDER + fname + ".png")
+        os.remove(OUTPUT_FOLDER + fname + ".png")
         os.remove(INPUT_FOLDER + fileName)
         return hash, True
-    except Exception as e:
-        print('Error getting hash from local file ', e)
+    except Exception:
+        print('Error getting hash from local file ')
+        logging.traceback.format_exc()
         return '', False
 
 def get_video_hash_from_s3_file(fileName, bucketName, filePathPrefix):
@@ -172,16 +179,18 @@ def get_video_hash_from_s3_file(fileName, bucketName, filePathPrefix):
         with open(INPUT_FOLDER+fileName, 'wb') as f:
             s3.download_fileobj(bucketName, filePathPrefix + fileName, f)
         return get_video_hash_from_local_file(fileName)
-    except Exception as e:
-        print('error getting hash from s3 ', e)
+    except Exception:
+        print('error getting hash from s3 file')
+        logging.traceback.format_exc()
 
 def get_image_hash_from_local_file(fileName):
     try:
         hash = hash_image(INPUT_FOLDER + fileName)
         os.remove(INPUT_FOLDER + fileName)
         return hash, True
-    except Exception as e:
-        print('error getting image hash ', e)
+    except Exception:
+        print('error getting image hash ')
+        logging.traceback.format_exc()
         return '', False
         
 def get_image_hash_from_s3_file(fileName, bucketName, filePathPrefix):
@@ -190,16 +199,18 @@ def get_image_hash_from_s3_file(fileName, bucketName, filePathPrefix):
         with open(INPUT_FOLDER+fileName, 'wb') as f:
             s3.download_fileobj(bucketName, filePathPrefix + fileName, f)
         return get_image_hash_from_local_file(fileName)
-    except Exception as e:
-        print('error getting hash from s3 file ', e)
+    except Exception:
+        print('error getting hash from s3 file ')
+        logging.traceback.format_exc()
         
 def get_audio_hash_from_local_file(fileName):
     try:
         hash = hash_audio(INPUT_FOLDER + fileName)
         os.remove(INPUT_FOLDER + fileName)
         return hash, True
-    except Exception as e:
-        print('error getting image hash ', e)
+    except Exception:
+        print('error getting image hash ')
+        logging.traceback.format_exc()
         return '', False
 
 def get_audio_hash_from_s3_file(fileName, bucketName, filePathPrefix):
@@ -212,5 +223,6 @@ def get_audio_hash_from_s3_file(fileName, bucketName, filePathPrefix):
         with open(INPUT_FOLDER+fileName, 'wb') as f:
             s3.download_fileobj(bucketName, filePathPrefix + fileName, f, Callback=download_progress)
         return get_audio_hash_from_local_file(fileName)
-    except Exception as e:
-        print('error getting hash from s3 file ', e)
+    except Exception:
+        print('error getting hash from s3 file ')
+        logging.traceback.format_exc()

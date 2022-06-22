@@ -17,7 +17,7 @@ kiwisolver==1.2.0
 moviepy==1.0.3
 mp3hash==0.1
 networkx==2.5
-numpy==1.19.1
+numpy==1.22.0
 opencv-contrib-python==4.4.0.42
 pika==1.1.0
 Pillow==7.2.0

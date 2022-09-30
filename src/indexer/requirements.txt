@@ -11,7 +11,7 @@ imagehash==4.1.0
 imageio-ffmpeg==0.4.2
 imutils==0.5.3
 jmespath==0.10.0
-joblib==0.16.0
+joblib==1.2.0
 katna==0.4.1.4
 kiwisolver==1.2.0
 moviepy==1.0.3
